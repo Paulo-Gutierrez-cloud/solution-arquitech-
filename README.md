@@ -1,17 +1,36 @@
 # AWS Solution Architect Journey 🚀
 
-Bienvenido a mi repositorio personal donde documento mi camino para convertirme en **AWS Certified Solutions Architect**. Aquí registro los workshops, laboratorios y proyectos que realizo como parte de mi beca.
-
-## 🛠️ Workshops & Labs
-
-| # | Workshop | Temas Clave | Fecha |
-|---|----------|-------------|-------|
-| 01 | [Bedrock Product Recommendation Chatbot](./workshops/01-bedrock-product-recommender/README.md) | GenAI, Bedrock Agents, Lambda, DynamoDB | Feb 2026 |
-
-## 🎯 Objetivos
-- Dominar el diseño de arquitecturas resilientes y escalables en AWS.
-- Implementar soluciones de Inteligencia Artificial Generativa.
-- Aplicar las mejores prácticas del AWS Well-Architected Framework.
+<div align="center">
+  <img src="https://img.shields.io/badge/AWS-Solutions_Architect-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS SA Badge" />
+  <img src="https://img.shields.io/badge/Certification-In_Progress-blue?style=for-the-badge" alt="Progress Badge" />
+  <br/>
+  <p><i>Mi camino hacia la certificación AWS Solution Architect, documentando cada workshop y laboratorio.</i></p>
+</div>
 
 ---
-*Documentado con el apoyo de Antigravity AI.*
+
+## 🛠️ Tecnologías y Servicios
+![AWS](https://img.shields.io/badge/AWS-%23232F3E.svg?style=flat&logo=amazon-aws&logoColor=white)
+![Amazon Bedrock](https://img.shields.io/badge/Amazon_Bedrock-FF9900?style=flat)
+![Lambda](https://img.shields.io/badge/AWS_Lambda-%23FF9900.svg?style=flat&logo=aws-lambda&logoColor=white)
+![DynamoDB](https://img.shields.io/badge/Amazon_DynamoDB-4053D6?style=flat&logo=amazon-dynamodb&logoColor=white)
+![S3](https://img.shields.io/badge/Amazon_S3-569A31?style=flat&logo=amazon-s3&logoColor=white)
+
+---
+
+## 📚 Registro de Workshops
+
+| Workshop | Resumen Visual | Status |
+| :--- | :--- | :---: |
+| [**01: Bedrock Product Recommender**](./workshops/01-bedrock-product-recommender/README.md) | Chatbot con GenAI y Agentes | ✅ Completado |
+
+## 🎯 Objetivos de Aprendizaje
+- [ ] Diseño de arquitecturas multi-región y resilientes.
+- [x] Implementación de **Generative AI** Agents en AWS.
+- [ ] Seguridad y Cumplimiento con IAM y KMS.
+- [ ] Automatización con Infrastructure as Code (IaC).
+
+---
+<div align="center">
+  <sub>Documentado con ❤️ usando Antigravity AI</sub>
+</div>
