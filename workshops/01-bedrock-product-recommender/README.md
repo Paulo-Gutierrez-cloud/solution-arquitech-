@@ -12,6 +12,7 @@ En este workshop, implementé un **Agente de Amazon Bedrock** diseñado para apl
 ## 🏗️ Arquitectura de la Solución
 La solución utiliza una arquitectura **Serverless** que integra capacidades de IA con servicios tradicionales de AWS.
 
+### Diagrama de Alto Nivel
 ```mermaid
 graph TD
     User([Usuario/App]) <-->|Natural Language| Agent[Amazon Bedrock Agent]
@@ -32,14 +33,37 @@ graph TD
     style KB fill:#FF9900,stroke:#232F3E,stroke-width:1px,color:#fff
 ```
 
+### Flujo Detallado de una Consulta (Sequence Diagram)
+Para entender cómo "piensa" el agente, este es el flujo lógico cuando un usuario pide una recomendación:
+
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant A as Bedrock Agent
+    participant L as Action Group (Lambda)
+    participant D as DynamoDB
+    participant KB as Knowledge Base (RAG)
+
+    U->>A: "Necesito un regalo para mi hermano"
+    Note over A: Pre-processing: Analiza intención
+    A->>KB: Busca contexto adicional (¿qué marcas prefiere?)
+    KB-->>A: Retorna especificaciones de productos
+    A->>L: Invoca Action Group (get_product_details)
+    L->>D: Query productos por categoría 'men'
+    D-->>L: Datos crudos de productos
+    L-->>A: Retorna lista de productos formateada
+    Note over A: Orchestration: Redacta respuesta amigable
+    A->>U: "Te recomiendo estas opciones basadas en..."
+```
+
 ---
 
-## 🛠️ Servicios Utilizados
-- **Amazon Bedrock Agents**: Para la orquestación de la conversación y razonamiento.
-- **AWS Lambda**: Para ejecutar la lógica de negocio (consultar productos).
-- **Amazon DynamoDB**: Almacenamiento NoSQL escalable para el stock de productos.
-- **Amazon S3 + Knowledge Bases**: Para implementar RAG (acceso a información técnica de productos).
-- **Amazon Personalize**: Para sugerencias personalizadas de "venta cruzada".
+## 🛠️ Detalle de los "Action Groups" e integración
+Uno de los puntos clave del laboratorio es cómo el agente interactúa con el mundo exterior:
+
+1.  **Definición de OpenAPI**: Se utiliza un esquema JSON/YAML para decirle al agente qué funciones existen (ej: `get_product_details`).
+2.  **Lógica en Lambda**: La función Lambda recibe la intención del agente, extrae parámetros (como `category` o `gender`) y consulta DynamoDB.
+3.  **Knowledge Bases (RAG)**: A diferencia de los datos estructurados en DynamoDB, las Knowledge Bases permiten al agente leer archivos PDF o de texto en S3 para responder preguntas complejas sobre garantía, materiales o manuales de uso.
 
 ---
 
