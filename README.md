@@ -1,36 +1,29 @@
-# AWS Solution Architect Journey 🚀
+# Laboratorios AWS - Solution Architect Journey
 
-<div align="center">
-  <img src="https://img.shields.io/badge/AWS-Solutions_Architect-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS SA Badge" />
-  <img src="https://img.shields.io/badge/Certification-In_Progress-blue?style=for-the-badge" alt="Progress Badge" />
-  <br/>
-  <p><i>Mi camino hacia la certificación AWS Solution Architect, documentando cada workshop y laboratorio.</i></p>
-</div>
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazonaws&logoColor=white)
+![Bedrock](https://img.shields.io/badge/Amazon_Bedrock-FF9900?style=flat&logo=amazonaws&logoColor=white)
+![Lambda](https://img.shields.io/badge/AWS_Lambda-FF9900?style=flat&logo=awslambda&logoColor=white)
+![DynamoDB](https://img.shields.io/badge/Amazon_DynamoDB-4053D6?style=flat&logo=amazondynamodb&logoColor=white)
+![S3](https://img.shields.io/badge/Amazon_S3-569A31?style=flat&logo=amazons3&logoColor=white)
 
----
+Este es un repositorio donde documento los diferentes **workshops y laboratorios de AWS** realizados como parte de mi beca en el camino a **Solution Architect**.
+El objetivo es explorar y documentar arquitecturas serverless, resilientes y escalables que ofrece AWS, comprendiendo los patrones de diseño de cada servicio.
 
-## 🛠️ Tecnologías y Servicios
-![AWS](https://img.shields.io/badge/AWS-%23232F3E.svg?style=flat&logo=amazon-aws&logoColor=white)
-![Amazon Bedrock](https://img.shields.io/badge/Amazon_Bedrock-FF9900?style=flat)
-![Lambda](https://img.shields.io/badge/AWS_Lambda-%23FF9900.svg?style=flat&logo=aws-lambda&logoColor=white)
-![DynamoDB](https://img.shields.io/badge/Amazon_DynamoDB-4053D6?style=flat&logo=amazon-dynamodb&logoColor=white)
-![S3](https://img.shields.io/badge/Amazon_S3-569A31?style=flat&logo=amazon-s3&logoColor=white)
+## Proyectos - Laboratorios
 
----
+- [Chatbot de Recomendación de Productos con Amazon Bedrock Agents](./workshops/01-bedrock-product-recommender/README.md)
 
-## 📚 Registro de Workshops
+## 🧹 Limpieza de Ambiente AWS
 
-| Workshop | Resumen Visual | Status |
-| :--- | :--- | :---: |
-| [**01: Bedrock Product Recommender**](./workshops/01-bedrock-product-recommender/README.md) | Chatbot con GenAI y Agentes | ✅ Completado |
+> **⚠️ Importante:** Todos los laboratorios pueden generar costos en tu cuenta de AWS. La idea es: analizar la arquitectura → desplegar → probar → **destruir inmediatamente** los recursos.
+> Seguir las indicaciones de limpieza en cada laboratorio para evitar sorpresas en la facturación.
 
-## 🎯 Objetivos de Aprendizaje
-- [ ] Diseño de arquitecturas multi-región y resilientes.
-- [x] Implementación de **Generative AI** Agents en AWS.
-- [ ] Seguridad y Cumplimiento con IAM y KMS.
-- [ ] Automatización con Infrastructure as Code (IaC).
+## 📄 Licencia
 
----
-<div align="center">
-  <sub>Documentado con ❤️ usando Antigravity AI</sub>
-</div>
+Este proyecto está bajo la Licencia MIT. Ver archivo [LICENSE](LICENSE) para más detalles.
+
+## 👥 Autor
+
+- Paulo Gutierrez - [@Paulo-Gutierrez-cloud](https://github.com/Paulo-Gutierrez-cloud)
+
+**⚠️ Nota Importante:** Este es un proyecto educativo para aprender arquitecturas cloud en AWS. Revisar y ajustar lo necesario si estás pensando en utilizarlo a nivel productivo.

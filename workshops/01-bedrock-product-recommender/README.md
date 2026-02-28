@@ -1,98 +1,202 @@
-# Workshop 01: Product Recommendation Chatbot with Amazon Bedrock Agents
+# Amazon Bedrock Agents - Chatbot de Recomendación de Productos
 
-<p align="center">
-  <img src="./assets/image1.png" width="800" alt="Workshop Title" />
-</p>
+Esta es una arquitectura de referencia **Serverless con IA Generativa** para desplegar un chatbot inteligente de e-commerce. El objetivo es aprender a utilizar **Amazon Bedrock Agents**, **Action Groups**, **Knowledge Bases (RAG)** y **Multi-Agent Collaboration** en AWS.
 
-## 📋 Resumen Ejecutivo
-En este workshop, implementé un **Agente de Amazon Bedrock** diseñado para aplicaciones de e-commerce. Este agente utiliza modelos de lenguaje (LLMs) para interactuar con clientes, entender sus necesidades y recomendar productos de forma dinámica consumiendo APIs reales.
+## 🏗️ Arquitectura
+
+![Arquitectura Bedrock Agents - Chatbot E-commerce](assets/architecture-diagram.png)
+
+La aplicación implementa los siguientes componentes:
+
+- **Amazon Bedrock Agent**: Orquestador conversacional que utiliza Claude (Anthropic) como modelo fundacional
+- **AWS Lambda (Action Groups)**: Lógica de negocio para consultar productos vía API
+- **Amazon DynamoDB**: Tabla NoSQL con el catálogo de productos (atributos: `product_name`, `category`, `gender`, `occasion`)
+- **Amazon S3 + Knowledge Bases**: Implementación de RAG para enriquecer respuestas con documentos no estructurados
+- **Amazon Personalize (simulado)**: API de upselling basada en "Customers who bought X also bought Y"
+- **IAM Roles**: `AmazonBedrockExecutionRole` para permisos del agente
+
+> **📝 Nota:** Este workshop se ejecuta en la región **US West (Oregon) - us-west-2**. Duración estimada: ~1 hora.
 
 ---
 
-## 🏗️ Arquitectura de la Solución
-La solución utiliza una arquitectura **Serverless** que integra capacidades de IA con servicios tradicionales de AWS.
+## 📋 Prerrequisitos
 
-### Diagrama de Alto Nivel
-```mermaid
-graph TD
-    User([Usuario/App]) <-->|Natural Language| Agent[Amazon Bedrock Agent]
-    
-    subgraph "Inteligencia y Orquestación"
-        Agent <-->|Invoca| Lambda[AWS Lambda Action Groups]
-        Agent <-->|RAG| KB[Knowledge Base for Bedrock]
-    end
-    
-    subgraph "Datos y Contenido"
-        Lambda <-->|Query| DDB[(Amazon DynamoDB Catálogo)]
-        KB <-->|Ingesta| S3[Amazon S3 Docs]
-        Agent -- "Upselling" --> Pers[Personalize API]
-    end
+1. **Cuenta de AWS** con acceso a Amazon Bedrock
+2. **Acceso al modelo Claude** habilitado en Bedrock (Model Access)
+3. **Permisos IAM** para crear Lambda, DynamoDB, S3, Bedrock Agents
+4. **AWS CloudFormation** (la infraestructura base se despliega automáticamente)
 
-    style Agent fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
-    style Lambda fill:#FF9900,stroke:#232F3E,stroke-width:1px,color:#fff
-    style KB fill:#FF9900,stroke:#232F3E,stroke-width:1px,color:#fff
+---
+
+## 🔧 Componentes del Chatbot
+
+### Backend (Serverless)
+
+| Componente | Función | Recurso |
+| :--- | :--- | :--- |
+| `GetProductDetailsFunction` | Consulta productos con filtros por categoría, género y ocasión | AWS Lambda |
+| `PopulateProductsTableFunction` | Genera 100 productos de ejemplo | AWS Lambda |
+| `GetPersonalizeRecommendationFunction` | Simula recomendaciones de venta cruzada | AWS Lambda |
+| `producttableandapi-ws-Products-XXXX` | Almacena catálogo con GSI por categoría | DynamoDB |
+
+### Agente (IA)
+
+| Componente | Función |
+| :--- | :--- |
+| `product-recommendation-agent` | Agente principal de recomendaciones |
+| `product-details-agent` | Sub-agente especializado en detalles de producto |
+| `cart-management-agent` | Sub-agente de gestión de carrito |
+| Knowledge Base | RAG con documentos de S3 para contexto adicional |
+
+---
+
+## 🚀 Pasos del Laboratorio
+
+### 1. Setup Automático (CloudFormation)
+La infraestructura base se despliega con un stack de CloudFormation que crea:
+- Tabla DynamoDB con 100 productos de ejemplo
+- Funciones Lambda para consultar y poblar datos
+- Roles IAM necesarios
+
+### 2. Crear el Agente en Bedrock Console
+```
+Amazon Bedrock → Agents → Create Agent
+Nombre: product-recommendation-agent
+Modelo: Claude Sonnet 4.5 v1
 ```
 
-### Flujo Detallado de una Consulta (Sequence Diagram)
-Para entender cómo "piensa" el agente, este es el flujo lógico cuando un usuario pide una recomendación:
+### 3. Configurar Instrucciones del Agente
+```text
+you are a specialized product recommendation agent that focuses on getting product details.
+Always start by getting the full list of products from the API so you can know the proper 
+filter values to be used in the API parameters.
+Help identify the best products based on the filters in the action groups by asking questions 
+to identify at least one of the input filters: gender, category or occasion.
+do not recommend any products that are not retrieved from the products API.
+```
+
+### 4. Configurar Action Groups
+Se define un esquema OpenAPI que conecta el agente con la Lambda `GetProductDetailsFunction`:
+- **Path**: `/products`
+- **Method**: `GET`
+- **Parameters**: `category`, `gender`, `occasion`
+
+### 5. Integrar Knowledge Base (RAG)
+Ingesta de documentos desde S3 para que el agente pueda responder preguntas sobre garantías, materiales y políticas.
+
+### 6. Multi-Agent Collaboration
+Creación de agentes especializados coordinados por un supervisor:
+- **product-details-agent**: Búsqueda y filtrado de productos
+- **cart-management-agent**: Agregar/consultar carrito de compras
+
+---
+
+## 📊 Flujo Detallado (Sequence Diagram)
 
 ```mermaid
 sequenceDiagram
-    participant U as Usuario
-    participant A as Bedrock Agent
-    participant L as Action Group (Lambda)
-    participant D as DynamoDB
-    participant KB as Knowledge Base (RAG)
+    participant U as 👤 Usuario
+    participant A as 🤖 Bedrock Agent
+    participant L as ⚡ Lambda (Action Group)
+    participant D as 🗄️ DynamoDB
+    participant KB as 📚 Knowledge Base
+    participant P as 🎯 Personalize
 
     U->>A: "Necesito un regalo para mi hermano"
     Note over A: Pre-processing: Analiza intención
-    A->>KB: Busca contexto adicional (¿qué marcas prefiere?)
-    KB-->>A: Retorna especificaciones de productos
-    A->>L: Invoca Action Group (get_product_details)
-    L->>D: Query productos por categoría 'men'
-    D-->>L: Datos crudos de productos
-    L-->>A: Retorna lista de productos formateada
-    Note over A: Orchestration: Redacta respuesta amigable
-    A->>U: "Te recomiendo estas opciones basadas en..."
+    A->>U: "¿Qué categoría prefieres?"
+    U->>A: "Tecnología, para su cumpleaños"
+    
+    A->>L: Invoca get_product_details(gender=men, category=tech, occasion=birthday)
+    L->>D: Scan con filtros
+    D-->>L: Lista de productos
+    L-->>A: Productos formateados
+    
+    A->>KB: Busca información adicional sobre garantías
+    KB-->>A: Contexto de documentos S3
+    
+    Note over A: Orchestration: Compone respuesta
+    A->>U: "Te recomiendo estos 3 productos..."
+    
+    U->>A: "Agrega el primero al carrito"
+    A->>P: GetPersonalizeRecommendation(product_name)
+    P-->>A: Producto sugerido para upselling
+    A->>U: "¡Agregado! Otros clientes también compraron..."
 ```
 
 ---
 
-## 🛠️ Detalle de los "Action Groups" e integración
-Uno de los puntos clave del laboratorio es cómo el agente interactúa con el mundo exterior:
+## 🔐 Configuración de Seguridad
 
-1.  **Definición de OpenAPI**: Se utiliza un esquema JSON/YAML para decirle al agente qué funciones existen (ej: `get_product_details`).
-2.  **Lógica en Lambda**: La función Lambda recibe la intención del agente, extrae parámetros (como `category` o `gender`) y consulta DynamoDB.
-3.  **Knowledge Bases (RAG)**: A diferencia de los datos estructurados en DynamoDB, las Knowledge Bases permiten al agente leer archivos PDF o de texto en S3 para responder preguntas complejas sobre garantía, materiales o manuales de uso.
+### IAM Roles
+| Rol | Propósito |
+| :--- | :--- |
+| `AmazonBedrockExecutionRole` | Permite al agente invocar modelos y Lambda |
+| `Lambda Execution Role` | Acceso a DynamoDB y CloudWatch Logs |
+
+### Mejores Prácticas Implementadas
+✅ **Principio de menor privilegio**: Los roles IAM tienen solo los permisos necesarios  
+✅ **KMS Encryption**: Datos encriptados con clave administrada por AWS  
+✅ **Session Timeout**: Timeout de sesión del agente configurado a 600 segundos  
+✅ **CloudWatch Logs**: Logs centralizados de todas las funciones Lambda  
+
+### Mejoras Futuras (No implementadas)
+1. **VPC Endpoints** para acceso privado a DynamoDB y S3
+2. **Guardrails** de Bedrock para controlar respuestas del modelo
+3. **AWS WAF** si se expone como API pública
 
 ---
 
 ## 📸 Evidencia de Implementación
 
-### 1. Configuración del Agente
-Se definieron las instrucciones del sistema y se seleccionó el modelo fundacional (Claude).
+### Configuración del Agente y Modelo Fundacional
 <p align="center">
-  <img src="./assets/image30.png" width="700" alt="Agent Configuration" />
+  <img src="assets/image30.png" width="700" alt="Configuración del Agente" />
 </p>
 
-### 2. Trazabilidad y Razonamiento (Orchestration Trace)
-Aquí se observa cómo el agente "piensa" y decide qué API llamar basándose en la charla con el usuario.
+### Trazabilidad del Razonamiento (Orchestration Trace)
 <p align="center">
-  <img src="./assets/image10.png" width="700" alt="Orchestration Trace" />
+  <img src="assets/image10.png" width="700" alt="Orchestration Trace" />
 </p>
 
-### 3. Resultados Finales
-El agente es capaz de gestionar carritos y recomendar productos con precisión.
+### Integración con Amazon Personalize (Upselling)
 <p align="center">
-  <img src="./assets/image38.png" width="700" alt="Workshop Summary" />
+  <img src="assets/image20.png" width="700" alt="Amazon Personalize Integration" />
 </p>
+
+### Resultado Final - Summary
+<p align="center">
+  <img src="assets/image38.png" width="700" alt="Workshop Summary" />
+</p>
+
+---
+
+## 🛠️ Troubleshooting
+
+| Problema | Solución |
+| :--- | :--- |
+| El agente no responde | Verificar que el modelo Claude esté habilitado en Model Access |
+| Lambda timeout | Aumentar timeout a 30s en la configuración de la función |
+| Productos vacíos | Ejecutar `PopulateProductsTableFunction` manualmente |
+| Knowledge Base no indexa | Verificar permisos del rol de Bedrock sobre el bucket S3 |
+| Action Group no se invoca | Revisar el esquema OpenAPI y que la Lambda esté asociada |
 
 ---
 
 ## 💡 Key Takeaways
-- **Generative AI Agents**: Aprendí a pasar de un modelo estático a un agente proactivo que ejecuta acciones.
-- **RAG (Retrieval Augmented Generation)**: Implementación de conocimiento externo sin re-entrenar el modelo.
-- **Multi-Agent Collaboration**: Uso de agentes especializados trabajando en conjunto para una tarea compleja.
+- **Generative AI Agents**: De un modelo estático a un agente proactivo que ejecuta acciones reales
+- **RAG (Retrieval Augmented Generation)**: Conocimiento externo sin re-entrenar el modelo
+- **Multi-Agent Collaboration**: Agentes especializados coordinados por un supervisor
+- **Action Groups + OpenAPI**: El puente entre lenguaje natural y APIs estructuradas
 
 ---
-*Este proyecto forma parte de mi portafolio impulsado por la beca de Solution Architect.*
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](/LICENSE) para más detalles.
+
+## 👥 Autor
+
+- Paulo Gutierrez - [@Paulo-Gutierrez-cloud](https://github.com/Paulo-Gutierrez-cloud)
+
+**⚠️ Nota Importante:** Este es un proyecto educativo para aprender a construir agentes de IA con Amazon Bedrock en AWS. Revisar y ajustar lo necesario si estás pensando en utilizarlo a nivel productivo.
