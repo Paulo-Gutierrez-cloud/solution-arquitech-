@@ -11,7 +11,10 @@ El objetivo es explorar y documentar arquitecturas serverless, resilientes y esc
 
 ## Proyectos - Laboratorios
 
-- [Chatbot de Recomendación de Productos con Amazon Bedrock Agents](./workshops/01-bedrock-product-recommender/README.md)
+| Lab # | Title | Description | Link |
+| :---: | :--- | :--- | :--- |
+| 01 | **Bedrock Chatbot Agent** | Action Groups, RAG & Agents for Bedrock. | [View Lab](workshops/01-bedrock-product-recommender/README.md) |
+| 02 | **Agentic Weather Assistant** | Pure Python Agentic AI with Claude 4.5 & NWS API. | [View Lab](workshops/02-agentic-ai-weather-agent/README.md) |
 
 ## 🧹 Limpieza de Ambiente AWS
 
