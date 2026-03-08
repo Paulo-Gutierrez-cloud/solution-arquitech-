@@ -15,7 +15,7 @@ El objetivo es explorar y documentar arquitecturas serverless, resilientes y esc
 | :---: | :--- | :--- | :--- |
 | 01 | **Bedrock Chatbot Agent** | Action Groups, RAG & Agents for Bedrock. | [View Lab](workshops/01-bedrock-product-recommender/README.md) |
 | 02 | **Agentic Weather Assistant** | Pure Python Agentic AI with Claude 4.5 & NWS API. | [View Lab](workshops/02-agentic-ai-weather-agent/README.md) |
-
+| 03 | **Strands Agents SDK** | Multi-Agent Orkestration, tools, & models integration. | [View Lab](workshops/03-strands-agents/README.md) |
 ## 🧹 Limpieza de Ambiente AWS
 
 > **⚠️ Importante:** Todos los laboratorios pueden generar costos en tu cuenta de AWS. La idea es: analizar la arquitectura → desplegar → probar → **destruir inmediatamente** los recursos.
